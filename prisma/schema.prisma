@@ -1,20 +1,33 @@
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator db {
-  provider = "go run github.com/prisma/prisma-client-go"
+  provider = "prisma-client-js"
 }
 
 model Account {
-  id      String   @id @default(uuid())
-  devices Device[]
+  id            String         @id @default(uuid())
+  email         String
+  devices       Device[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deviceId  String
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
 }
 
 model Device {
   id         String  @id @default(cuid())
   authorized Boolean
+  pin        Int
+  name       String
   account    Account @relation(fields: [accountId], references: [id])
   accountId  String
 }

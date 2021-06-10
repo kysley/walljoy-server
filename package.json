@@ -1,0 +1,36 @@
+{
+  "name": "walljoy-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/kysley/walljoy-server",
+  "author": "Evan Kysley <evan@kysley.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --transpile-only --no-notify src/index.ts",
+    "dev:typecheck": "tsc --noEmit --watch",
+    "build": "yarn nexus:reflection:temp && tsc",
+    "build:reflect": "cross-env NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node --transpile-only ./src/schema"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.1",
+    "cross-env": "^7.0.3",
+    "prisma": "^2.23.0",
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^2.23.0",
+    "bcryptjs": "^2.4.3",
+    "connection-string": "^4.3.4",
+    "fastify": "^3.15.1",
+    "fastify-plugin": "^3.0.0",
+    "graphql": "^15.5.0",
+    "graphql-scalars": "^1.9.3",
+    "ioredis": "^4.27.3",
+    "jsonwebtoken": "^8.5.1",
+    "mercurius": "^7.6.1",
+    "nexus": "^1.0.0",
+    "nexus-plugin-prisma": "^0.35.0"
+  }
+}
