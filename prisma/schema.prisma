@@ -25,9 +25,10 @@ model RefreshToken {
 
 model Device {
   id         String  @id @default(cuid())
+  deviceId   String
   authorized Boolean
-  pin        Int
   name       String
+  code       String
   account    Account @relation(fields: [accountId], references: [id])
   accountId  String
 }

@@ -6,14 +6,15 @@
   "author": "Evan Kysley <evan@kysley.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --no-notify src/index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only --no-notify src/index.ts",
     "dev:typecheck": "tsc --noEmit --watch",
     "build": "yarn nexus:reflection:temp && tsc",
-    "build:reflect": "cross-env NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node --transpile-only ./src/schema"
+    "build:reflect": "cross-env NODE_ENV=production NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node --transpile-only ./src/schema"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^8.5.1",
+    "@types/uuid": "^8.3.0",
     "cross-env": "^7.0.3",
     "prisma": "^2.23.0",
     "ts-node-dev": "^1.1.6",
@@ -31,6 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "mercurius": "^7.6.1",
     "nexus": "^1.0.0",
-    "nexus-plugin-prisma": "^0.35.0"
+    "nexus-plugin-prisma": "^0.35.0",
+    "uuid": "^8.3.2"
   }
 }

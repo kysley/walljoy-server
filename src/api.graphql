@@ -16,8 +16,9 @@ type Credentials {
 type Device {
   account: Account!
   authorized: Boolean!
+  code: String!
   id: String!
-  pin: Int!
+  name: String!
 }
 
 input DeviceWhereUniqueInput {
@@ -25,15 +26,15 @@ input DeviceWhereUniqueInput {
 }
 
 input LoginInput {
-  deviceId: String!
   email: String!
-  pin: Int!
+  sessionId: String!
 }
 
 type Mutation {
+  authenticateDevice(deviceId: String, pin: String): Boolean
   refreshCredentials(refreshToken: String!): Credentials!
   register(input: LoginInput!): Credentials!
-  signin(pin: String): Account
+  signin: Account
 }
 
 type Query {

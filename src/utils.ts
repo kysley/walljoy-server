@@ -16,7 +16,7 @@ export function createToken(claims: TokenClaims) {
   return jwt.sign(payload, secretToken);
 }
 
-const secretToken = process.env.JWT_SECRET || "secret:trygql.dev";
+const secretToken = process.env.JWT_SECRET || "secret:secret";
 
 const verifyToken = (
   token: string | undefined,
