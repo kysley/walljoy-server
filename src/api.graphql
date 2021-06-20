@@ -13,6 +13,8 @@ type Credentials {
   token: String!
 }
 
+scalar DateTime
+
 type Device {
   account: Account!
   authorized: Boolean!
@@ -38,5 +40,12 @@ type Mutation {
 }
 
 type Query {
-  ok: Boolean!
+  wallpapers: [Wallpaper]
+}
+
+type Wallpaper {
+  createdAt: DateTime!
+  id: String!
+  u_url: String!
+  updatedAt: DateTime!
 }

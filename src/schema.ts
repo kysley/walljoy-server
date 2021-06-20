@@ -1,5 +1,7 @@
 import {
+  arg,
   inputObjectType,
+  list,
   mutationField,
   mutationType,
   nonNull,
@@ -15,6 +17,17 @@ export const Account = objectType({
     t.model.id();
     t.model.devices();
     t.model.email();
+  },
+});
+
+export const Wallpaper = objectType({
+  name: "Wallpaper",
+  definition(t) {
+    // t.model.collection()
+    t.model.id();
+    t.model.u_url();
+    t.model.createdAt();
+    t.model.updatedAt();
   },
 });
 
@@ -153,5 +166,15 @@ export const AuthenticateDevice = mutationField("authenticateDevice", {
     // return true;
     // }
     return false;
+  },
+});
+
+export const Wallpapers = queryField("wallpapers", {
+  type: list("Wallpaper"),
+  // args: {
+  //   where: arg({ type: "WallpaperWhereUniqueInput" }),
+  // },
+  async resolve(_, __, ctx) {
+    return ctx.prisma.wallpaper.findMany();
   },
 });

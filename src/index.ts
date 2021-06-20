@@ -3,12 +3,13 @@ import mercurius from "mercurius";
 import { makeSchema } from "nexus";
 import { nexusPrisma } from "nexus-plugin-prisma";
 import path from "path";
+import fcors from "fastify-cors";
 
 import { createSession } from "./redis";
 import context, { prisma } from "./utils";
-
 import * as types from "./schema";
 import { encrypt } from "./aes";
+import "./queue";
 
 const schema = makeSchema({
   types,
@@ -46,6 +47,7 @@ app.get("/health", (_req, res) => {
 
 // the device owning the id will call this to get a sessionId to open the web app with
 app.post("/ack", async (req, res) => {
+  console.log("ack");
   if (req.body.identity) {
     // todo  this should be encrypted from the client
     const [deviceId, deviceName, code] = req.body.identity;
@@ -73,9 +75,17 @@ app.post("/renew", async (req, res) => {
 
 app.register(context);
 
+app.register(fcors);
+
 app.register(mercurius, {
   schema,
   context: (request) => request.ctx,
 });
 
 app.listen(process.env.PORT || 8080, "0.0.0.0");
+
+// hit https://source.unsplash.com/random/1920x1080 for 1920x1080 url
+// rewrite response to set q=100
+// perhaps snag the photo id as well
+// have a redis job that will get the days wallpaper at midnight. This means that we will
+// probably have the client request the new wallpaper slightly after midnight (race condition)

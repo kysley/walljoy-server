@@ -32,3 +32,17 @@ model Device {
   account    Account @relation(fields: [accountId], references: [id])
   accountId  String
 }
+
+model Wallpaper {
+  id         String     @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  collection Collection
+  u_url        String
+}
+
+enum Collection {
+  EARTH
+  STRUCTURE
+  RANDOM
+}

@@ -1,9 +1,10 @@
 import { ConnectionString } from "connection-string";
 import Redis from "ioredis";
 import { v4 } from "uuid";
+
 import { decrypt } from "./aes";
 
-let creds: any = {};
+export let creds: any = {};
 
 if (process.env.NODE_ENV === "development") {
   creds.password = process.env.REDIS_PASSWORD;
