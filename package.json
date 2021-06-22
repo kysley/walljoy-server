@@ -9,7 +9,8 @@
     "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only --no-notify src/index.ts",
     "dev:typecheck": "tsc --noEmit --watch",
     "build": "yarn nexus:reflection:temp && tsc",
-    "build:reflect": "cross-env NODE_ENV=production NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node --transpile-only ./src/schema"
+    "build:reflect": "cross-env NODE_ENV=production NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node --transpile-only ./src/schema",
+    "seed": "ts-node --transpile-only src/seed.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
