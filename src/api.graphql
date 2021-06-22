@@ -8,6 +8,20 @@ type Account {
   id: String!
 }
 
+type Collection {
+  createdAt: DateTime!
+  id: Int!
+  name: String!
+  official: Boolean!
+  updatedAt: DateTime!
+  wallpapers(after: WallpaperWhereUniqueInput, before: WallpaperWhereUniqueInput, first: Int, last: Int): [Wallpaper!]!
+}
+
+input CollectionWhere {
+  id: Int
+  name: String
+}
+
 type Credentials {
   refreshToken: String!
   token: String!
@@ -40,12 +54,19 @@ type Mutation {
 }
 
 type Query {
+  collection(where: CollectionWhere!): Collection
   wallpapers: [Wallpaper]
 }
 
 type Wallpaper {
+  collection: Collection
   createdAt: DateTime!
-  id: String!
+  id: Int!
   u_url: String!
   updatedAt: DateTime!
+}
+
+input WallpaperWhereUniqueInput {
+  id: Int
+  u_url: String
 }

@@ -5,6 +5,7 @@ import {
   mutationField,
   mutationType,
   nonNull,
+  nullable,
   objectType,
   queryField,
   stringArg,
@@ -20,10 +21,23 @@ export const Account = objectType({
   },
 });
 
+export const Collection = objectType({
+  name: "Collection",
+  definition(t) {
+    t.model.name();
+    t.model.id();
+    t.model.official();
+    // t.model.owner()
+    t.model.wallpapers();
+    t.model.updatedAt();
+    t.model.createdAt();
+  },
+});
+
 export const Wallpaper = objectType({
   name: "Wallpaper",
   definition(t) {
-    // t.model.collection()
+    t.model.collection();
     t.model.id();
     t.model.u_url();
     t.model.createdAt();
@@ -176,5 +190,48 @@ export const Wallpapers = queryField("wallpapers", {
   // },
   async resolve(_, __, ctx) {
     return ctx.prisma.wallpaper.findMany();
+  },
+});
+
+const CollectionWhere = inputObjectType({
+  name: "CollectionWhere",
+  definition(t) {
+    t.string("name");
+    t.int("id");
+  },
+});
+
+export const CollectionQuery = queryField("collection", {
+  type: nullable("Collection"),
+  args: {
+    where: nonNull(CollectionWhere),
+  },
+  async resolve(_, { where }, ctx) {
+    const { name, id } = where;
+
+    if (!name && !id) {
+      throw new Error("Please supply either name or id");
+    } else if (name && id) {
+      throw new Error("Please supply either name or id");
+    }
+
+    if (id) {
+      return await ctx.prisma.collection.findUnique({
+        where: {
+          id,
+        },
+      });
+    }
+
+    if (name) {
+      return await ctx.prisma.collection.findFirst({
+        where: {
+          name: {
+            in: name,
+          },
+        },
+      });
+    }
+    return null;
   },
 });

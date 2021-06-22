@@ -12,6 +12,7 @@ model Account {
   email         String
   devices       Device[]
   refreshTokens RefreshToken[]
+  collections   Collection[]
 }
 
 model RefreshToken {
@@ -34,15 +35,21 @@ model Device {
 }
 
 model Wallpaper {
-  id         String     @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  collection Collection
-  u_url        String
+  id           Int         @id @default(autoincrement())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  u_url        String      @unique
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+  collectionId Int?
 }
 
-enum Collection {
-  EARTH
-  STRUCTURE
-  RANDOM
+model Collection {
+  id         Int         @id @default(autoincrement())
+  name       String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  owner      Account     @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  wallpapers Wallpaper[]
+  official   Boolean
 }
