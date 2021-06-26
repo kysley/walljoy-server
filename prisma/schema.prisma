@@ -35,12 +35,11 @@ model Device {
 }
 
 model Wallpaper {
-  id           Int         @id @default(autoincrement())
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  u_url        String      @unique
-  collection   Collection? @relation(fields: [collectionId], references: [id])
-  collectionId Int?
+  id           Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  u_url        String       @unique
+  collection   Collection[]
 }
 
 model Collection {
