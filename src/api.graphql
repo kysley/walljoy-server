@@ -22,6 +22,10 @@ input CollectionWhere {
   name: String
 }
 
+input CollectionWhereUniqueInput {
+  id: Int
+}
+
 type Credentials {
   refreshToken: String!
   token: String!
@@ -49,17 +53,24 @@ input LoginInput {
 type Mutation {
   authenticateDevice(deviceId: String, pin: String): Boolean
   refreshCredentials(refreshToken: String!): Credentials!
-  register(input: LoginInput!): Credentials!
+  register(input: LoginInput!): Credentials
   signin: Account
+}
+
+input PaginationArgs {
+  cursor: Int
+  take: Int! = 15
 }
 
 type Query {
   collection(where: CollectionWhere!): Collection
-  wallpapers: [Wallpaper]
+  feed(where: PaginationArgs): [Wallpaper]
+  wallpaper(where: WallpaperWhereUniqueInput!): Wallpaper
+  wallpapers(where: PaginationArgs): [Wallpaper]
 }
 
 type Wallpaper {
-  collection: Collection
+  collection(after: CollectionWhereUniqueInput, before: CollectionWhereUniqueInput, first: Int, last: Int): [Collection!]!
   createdAt: DateTime!
   id: Int!
   u_url: String!

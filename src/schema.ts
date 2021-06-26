@@ -64,6 +64,14 @@ export const Credentials = objectType({
   },
 });
 
+export const PaginationArgs = inputObjectType({
+  name: "PaginationArgs",
+  definition(t) {
+    t.nonNull.int("take", { default: 15 });
+    t.int("cursor");
+  },
+});
+
 export const RefreshCredentials = mutationType({
   definition(t) {
     t.field("refreshCredentials", {
@@ -101,7 +109,7 @@ export const LoginInput = inputObjectType({
 });
 
 export const Register = mutationField("register", {
-  type: nonNull(Credentials),
+  type: "Credentials",
   args: {
     input: nonNull(LoginInput),
   },
@@ -139,7 +147,7 @@ export const Register = mutationField("register", {
       const refreshToken = acc.refreshTokens[0].id;
       return { token, refreshToken };
     }
-    return;
+    return null;
   },
 });
 
@@ -183,17 +191,52 @@ export const AuthenticateDevice = mutationField("authenticateDevice", {
   },
 });
 
-export const Wallpapers = queryField("wallpapers", {
+export const Feed = queryField("feed", {
   type: list("Wallpaper"),
-  // args: {
-  //   where: arg({ type: "WallpaperWhereUniqueInput" }),
-  // },
-  async resolve(_, __, ctx) {
-    return ctx.prisma.wallpaper.findMany();
+  args: {
+    where: nullable(PaginationArgs),
+  },
+  async resolve(_, { where }, ctx) {
+    const cursor = where?.cursor
+      ? { cursor: { id: where?.cursor }, skip: 1 }
+      : undefined;
+    return ctx.prisma.wallpaper.findMany({
+      take: where?.take,
+      ...cursor,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        collection: {
+          every: {
+            official: true,
+          },
+        },
+      },
+    });
   },
 });
 
-const CollectionWhere = inputObjectType({
+export const Wallpapers = queryField("wallpapers", {
+  type: list("Wallpaper"),
+  args: {
+    where: nullable(PaginationArgs),
+  },
+  async resolve(_, { where }, ctx) {
+    const cursor = where?.cursor
+      ? { cursor: { id: where?.cursor }, skip: 1 }
+      : undefined;
+    return ctx.prisma.wallpaper.findMany({
+      take: where?.take,
+      ...cursor,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  },
+});
+
+const CollectionQueryWhere = inputObjectType({
   name: "CollectionWhere",
   definition(t) {
     t.string("name");
@@ -204,7 +247,7 @@ const CollectionWhere = inputObjectType({
 export const CollectionQuery = queryField("collection", {
   type: nullable("Collection"),
   args: {
-    where: nonNull(CollectionWhere),
+    where: nonNull(CollectionQueryWhere),
   },
   async resolve(_, { where }, ctx) {
     const { name, id } = where;
@@ -227,11 +270,25 @@ export const CollectionQuery = queryField("collection", {
       return await ctx.prisma.collection.findFirst({
         where: {
           name: {
-            in: name,
+            contains: name,
           },
         },
       });
     }
     return null;
+  },
+});
+
+export const WallpaperQuery = queryField("wallpaper", {
+  type: nullable("Wallpaper"),
+  args: {
+    where: nonNull("WallpaperWhereUniqueInput"),
+  },
+  async resolve(_, { where }, ctx) {
+    return await ctx.prisma.wallpaper.findUnique({
+      where: {
+        id: where?.id,
+      },
+    });
   },
 });
