@@ -80,6 +80,7 @@ app.register(fcors);
 app.register(mercurius, {
   schema,
   context: (request) => request.ctx,
+  graphiql: true,
 });
 
 app.listen(process.env.PORT || 8080, "0.0.0.0");
