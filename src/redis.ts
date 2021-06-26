@@ -35,8 +35,8 @@ export const createSession = async (identity: string) => {
 export const getSesson = async (sessionId: string) => {
   const encrypted = await redis.get(getSessionKey(sessionId));
   // todo this ! is no good
-  // return decrypt(encrypted!);
-  return encrypted;
+  return decrypt(encrypted!);
+  // return encrypted;
 };
 
 export const deleteSession = async (sessionId: string) => {
