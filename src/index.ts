@@ -5,7 +5,7 @@ import { nexusPrisma } from "nexus-plugin-prisma";
 import path from "path";
 import fcors from "fastify-cors";
 
-import { createSession } from "./redis";
+import { createSession, getCollectionWallpaper } from "./redis";
 import context, { prisma } from "./utils";
 import * as types from "./schema";
 import { encrypt } from "./aes";
@@ -62,6 +62,13 @@ app.post("/ack", async (req, res) => {
 
     return sessionId;
   }
+});
+
+app.get("/c/:id", async (req, res) => {
+  const cId = req.params.id;
+  console.log(cId);
+
+  return await getCollectionWallpaper(cId);
 });
 
 // there also needs to be an endpoint to get a code. this would be called if ??
