@@ -10,7 +10,7 @@ import {
   queryField,
   stringArg,
 } from "nexus";
-import { deleteSession, getSesson } from "./redis";
+import { deleteSession, getSession } from "./redis";
 
 export const Account = objectType({
   name: "Account",
@@ -114,10 +114,10 @@ export const Register = mutationField("register", {
     input: nonNull(LoginInput),
   },
   async resolve(_, { input: { email, sessionId } }, ctx) {
-    const sessionInfo = await getSesson(sessionId);
+    const sessionInfo = await getSession(sessionId);
     console.log(sessionInfo);
     if (sessionInfo) {
-      const [deviceId, deviceName] = sessionInfo?.split(",");
+      const { deviceId, deviceName } = sessionInfo;
 
       const acc = await ctx.prisma.account.create({
         include: {
@@ -178,16 +178,32 @@ export const Signin = mutationField("signin", {
 export const AuthenticateDevice = mutationField("authenticateDevice", {
   type: "Boolean",
   args: {
-    pin: "String",
-    deviceId: "String",
+    sId: nonNull("String"),
   },
-  async resolve(_, { pin, deviceId }, ctx) {
-    // const expectedPin = redis.hget("pins", deviceId);
+  async resolve(_, { sId }, ctx) {
+    const claims = ctx.verifyClaims(true); // testing
 
-    // if (pin === expectedPin) {
-    // return true;
-    // }
-    return false;
+    if (!claims) {
+      throw new Error("Token expired.");
+    }
+
+    const { deviceId, deviceName } = await getSession(sId);
+
+    await ctx.prisma.account.update({
+      where: {
+        id: claims.sub,
+      },
+      data: {
+        devices: {
+          create: {
+            deviceId,
+            name: deviceName,
+            authorized: true,
+            code: "",
+          },
+        },
+      },
+    });
   },
 });
 
@@ -200,6 +216,7 @@ export const Feed = queryField("feed", {
     const cursor = where?.cursor
       ? { cursor: { id: where?.cursor }, skip: 1 }
       : undefined;
+    console.log(where?.take);
     return ctx.prisma.wallpaper.findMany({
       take: where?.take,
       ...cursor,
