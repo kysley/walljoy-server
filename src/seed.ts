@@ -1,9 +1,4 @@
-import { getUnsplashUrl, prisma } from "./utils";
-
-const waitToGetUnsplashUrl = async () => {
-  await new Promise((r) => setTimeout(r, 1000));
-  return getUnsplashUrl();
-};
+import { getUnsplashUrl, prisma, waitToGetUnsplashUrl } from "./utils";
 
 (async function () {
   try {

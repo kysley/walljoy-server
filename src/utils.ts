@@ -73,3 +73,8 @@ export const getUnsplashUrl = async (keywords?: string) => {
 
   return url.href;
 };
+
+export const waitToGetUnsplashUrl = async () => {
+  await new Promise((r) => setTimeout(r, 1000));
+  return getUnsplashUrl();
+};
