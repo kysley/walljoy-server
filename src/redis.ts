@@ -22,6 +22,7 @@ export const redis = new Redis({
 });
 
 const getSessionKey = (sessionId: string) => `sid:${sessionId}`;
+const getCollectionKey = (collectionId: number) => `c:${collectionId}`;
 
 export const createSession = async (identity: string) => {
   const sessionId = v4();
@@ -32,13 +33,26 @@ export const createSession = async (identity: string) => {
   return sessionId;
 };
 
-export const getSesson = async (sessionId: string) => {
+export const getSession = async (sessionId: string) => {
   const encrypted = await redis.get(getSessionKey(sessionId));
+
+  const [deviceId, deviceName] = decrypt(encrypted!).split(",");
   // todo this ! is no good
-  return decrypt(encrypted!);
+  return { deviceId, deviceName };
   // return encrypted;
 };
 
 export const deleteSession = async (sessionId: string) => {
   await redis.del(getSessionKey(sessionId));
+};
+
+export const setCollectionWallpaper = async (
+  collectionId: number,
+  url: string
+) => {
+  return await redis.set(getCollectionKey(collectionId), url);
+};
+
+export const getCollectionWallpaper = async (collectionId: number) => {
+  return await redis.get(getCollectionKey(collectionId));
 };
