@@ -51,7 +51,7 @@ input LoginInput {
 }
 
 type Mutation {
-  authenticateDevice(deviceId: String, pin: String): Boolean
+  authenticateDevice(sId: String!): Boolean
   refreshCredentials(refreshToken: String!): Credentials!
   register(input: LoginInput!): Credentials
   signin: Account

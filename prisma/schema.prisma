@@ -25,21 +25,22 @@ model RefreshToken {
 }
 
 model Device {
-  id         String  @id @default(cuid())
-  deviceId   String
-  authorized Boolean
-  name       String
-  code       String
-  account    Account @relation(fields: [accountId], references: [id])
-  accountId  String
+  id                 String     @id @default(cuid())
+  deviceId           String
+  authorized         Boolean
+  name               String
+  code               String
+  activeCollectionId Int?
+  account            Account    @relation(fields: [accountId], references: [id])
+  accountId          String
 }
 
 model Wallpaper {
-  id           Int          @id @default(autoincrement())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  u_url        String       @unique
-  collection   Collection[]
+  id         Int          @id @default(autoincrement())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  u_url      String       @unique
+  collection Collection[]
 }
 
 model Collection {
