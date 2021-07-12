@@ -151,7 +151,7 @@ export const Register = mutationField("register", {
   },
 });
 
-export const Signin = mutationField("signin", {
+export const Signin = queryField("signin", {
   type: "Account",
   async resolve(_, __, ctx) {
     const claims = ctx.verifyClaims(true); // for testing
@@ -175,35 +175,23 @@ export const Signin = mutationField("signin", {
   },
 });
 
-export const AuthenticateDevice = mutationField("authenticateDevice", {
+export const AuthenticateSession = mutationField("authenticateSession", {
   type: "Boolean",
   args: {
     sId: nonNull("String"),
   },
   async resolve(_, { sId }, ctx) {
-    const claims = ctx.verifyClaims(true); // testing
+    // const claims = ctx.verifyClaims(true); // testing
 
-    if (!claims) {
-      throw new Error("Token expired.");
+    // if (!claims) {
+    //   throw new Error("Token expired.");
+    // }
+    try {
+      await getSession(sId);
+      return true;
+    } catch {
+      return null;
     }
-
-    const { deviceId, deviceName } = await getSession(sId);
-
-    await ctx.prisma.account.update({
-      where: {
-        id: claims.sub,
-      },
-      data: {
-        devices: {
-          create: {
-            deviceId,
-            name: deviceName,
-            authorized: true,
-            code: "",
-          },
-        },
-      },
-    });
   },
 });
 
@@ -217,6 +205,7 @@ export const Feed = queryField("feed", {
       ? { cursor: { id: where?.cursor }, skip: 1 }
       : undefined;
     console.log(where?.take);
+
     return ctx.prisma.wallpaper.findMany({
       take: where?.take,
       ...cursor,

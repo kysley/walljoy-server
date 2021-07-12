@@ -51,10 +51,9 @@ input LoginInput {
 }
 
 type Mutation {
-  authenticateDevice(sId: String!): Boolean
+  authenticateSession(sId: String!): Boolean
   refreshCredentials(refreshToken: String!): Credentials!
   register(input: LoginInput!): Credentials
-  signin: Account
 }
 
 input PaginationArgs {
@@ -65,6 +64,7 @@ input PaginationArgs {
 type Query {
   collection(where: CollectionWhere!): Collection
   feed(where: PaginationArgs): [Wallpaper]
+  signin: Account
   wallpaper(where: WallpaperWhereUniqueInput!): Wallpaper
   wallpapers(where: PaginationArgs): [Wallpaper]
 }

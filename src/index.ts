@@ -49,18 +49,14 @@ app.get("/health", (_req, res) => {
 app.post("/ack", async (req, res) => {
   console.log("ack");
   if (req.body.identity) {
-    // todo  this should be encrypted from the client
-    const [deviceId, deviceName, code] = req.body.identity;
+    // const [deviceId, deviceName, code] = req.body.identity.split(",");
+    // todo invalidate old session if exists for deviceId
     const sessionId = await createSession(encrypt(req.body.identity));
-    if (code) {
-      const newCode = Math.random().toString(36).slice(2);
-      return {
-        newCode,
-        sessionId,
-      };
-    }
-
-    return sessionId;
+    const newCode = Math.random().toString(36).slice(2);
+    return {
+      newCode,
+      sessionId,
+    };
   }
 });
 
